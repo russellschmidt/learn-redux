@@ -2,7 +2,15 @@ var redux = require('redux');
 
 console.log("Starting redux example");
 
-var reducer = (state = {name: 'Anonymous'}, action) => {
+var stateDefault = {
+  name: 'Anonymous',
+  hobbies: [],
+  movies: []
+}
+var nextHobbyId = 1,
+    nextMovieId = 1;
+
+var reducer = (state = stateDefault, action) => {
   console.log('New Action', action);
 
   switch(action.type) {
@@ -11,6 +19,26 @@ var reducer = (state = {name: 'Anonymous'}, action) => {
         ...state,
         name: action.name
       };
+    case 'ADD_HOBBY':
+      return {
+        ...state,
+        hobbies: [...state.hobbies, {
+          id: nextHobbyId++,
+          hobby: action.hobby
+        }]
+      };
+    case 'ADD_MOVIE':
+      return {
+        ...state,
+        movies: [
+          ...state.movies,
+          {
+            id: nextMovieId++,
+            title: action.title,
+            genre: action.genre
+          }
+        ]
+      }
     default:
       return state;
   }
@@ -26,6 +54,8 @@ var unsubscribe = store.subscribe( () => {
 
   console.log('Name is: ', state.name);
   document.getElementById('app').innerHTML = state.name;
+
+  console.log('current state: ', store.getState());
 });
 
 var currentState = store.getState();
@@ -37,9 +67,30 @@ store.dispatch({
   name: "Bobert"
 });
 
-// unsubscribe();
+store.dispatch({
+  type: "ADD_HOBBY",
+  hobby: "Running"
+});
 
 store.dispatch({
   type: "CHANGE_NAME",
   name: "Jobery"
+});
+
+store.dispatch({
+  type: 'ADD_MOVIE',
+  title: 'Goonies',
+  genre: 'Adventure'
+});
+
+store.dispatch({
+  type: 'ADD_MOVIE',
+  title: 'Robocop',
+  genre: 'Science Fiction'
+});
+
+store.dispatch({
+  type: 'ADD_MOVIE',
+  title: 'Event Horizon',
+  genre: 'Science Fiction Horror'
 });
