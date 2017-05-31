@@ -8,10 +8,39 @@ var stateDefault = {
 };
 
 var reducer = (state = stateDefault, action) => {
-
-  return state;
+  switch (action.type) {
+    case 'CHANGE_SEARCH_TEXT':
+      return {
+        ...state,
+        searchText: action.searchText
+      };
+    default:
+      return state;
+  }
 };
 
-var store = redux.createStore(reducer);
+// for Redux devTools extension, add 2nd optional argument
+var store = redux.createStore(reducer, redux.compose(
+  window.devToolsExtension ? window.devToolsExtension() : f => f
+));
 
-console.log('current state: ', store.getState());
+// subscribe to changes
+var unsubscribeSearchText = store.subscribe( () => {
+  var state = store.getState();
+  document.getElementById('app').innerHTML = state.searchText;
+})
+
+store.dispatch({
+  type: 'CHANGE_SEARCH_TEXT',
+  searchText: 'twerk'
+});
+
+store.dispatch({
+  type: 'CHANGE_SEARCH_TEXT',
+  searchText: 'doggy'
+});
+
+store.dispatch({
+  type: 'CHANGE_SEARCH_TEXT',
+  searchText: 'doodles'
+});
