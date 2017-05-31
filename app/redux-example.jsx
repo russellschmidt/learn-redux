@@ -6,13 +6,12 @@ var stateDefault = {
   name: 'Anonymous',
   hobbies: [],
   movies: []
-}
+};
+
 var nextHobbyId = 1,
     nextMovieId = 1;
 
 var reducer = (state = stateDefault, action) => {
-  console.log('New Action', action);
-
   switch(action.type) {
     case 'CHANGE_NAME':
       return {
@@ -38,6 +37,16 @@ var reducer = (state = stateDefault, action) => {
             genre: action.genre
           }
         ]
+      };
+    case 'REMOVE_HOBBY':
+      return {
+        ...state,
+        hobbies: state.hobbies.filter((hobby) => hobby.id !== action.id)
+      };
+    case 'REMOVE_MOVIE':
+      return {
+        ...state,
+        movies: state.movies.filter((movie) => movie.id !== action.id)
       }
     default:
       return state;
@@ -52,15 +61,8 @@ var store = redux.createStore(reducer, redux.compose(
 var unsubscribe = store.subscribe( () => {
   var state = store.getState();
 
-  console.log('Name is: ', state.name);
   document.getElementById('app').innerHTML = state.name;
-
-  console.log('current state: ', store.getState());
 });
-
-var currentState = store.getState();
-
-console.log('current state: ', currentState);
 
 store.dispatch({
   type: "CHANGE_NAME",
@@ -73,8 +75,18 @@ store.dispatch({
 });
 
 store.dispatch({
+  type: "ADD_HOBBY",
+  hobby: "Walking"
+});
+
+store.dispatch({
+  type: "ADD_HOBBY",
+  hobby: "Crying"
+});
+
+store.dispatch({
   type: "CHANGE_NAME",
-  name: "Jobery"
+  name: "Fredjeffy"
 });
 
 store.dispatch({
@@ -93,4 +105,14 @@ store.dispatch({
   type: 'ADD_MOVIE',
   title: 'Event Horizon',
   genre: 'Science Fiction Horror'
+});
+
+store.dispatch({
+  type: 'REMOVE_HOBBY',
+  id: 2
+});
+
+store.dispatch({
+  type: 'REMOVE_MOVIE',
+  id: 1
 });
