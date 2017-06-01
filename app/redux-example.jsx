@@ -1,151 +1,9 @@
 var redux = require('redux');
-var axios = require('axios');
+
+var actions = require('./actions/index');
+var store = require('./store/configureStore').configure();
 
 console.log("Starting redux example");
-
-// Name Reducer and Action Generators
-// -----------------------
-var nameReducer = (state = 'Anonymous', action) => {
-  switch (action.type) {
-    case 'CHANGE_NAME':
-      return action.name;
-    default:
-      return state;
-  };
-};
-
-var changeName = (name) => {
-  return {
-    type: 'CHANGE_NAME',
-    name
-  };
-};
-
-// Hobbies Reducer and Action Generators
-// -----------------------
-var nextHobbyId = 1;
-var hobbiesReducer = (state = [], action) => {
-  switch(action.type) {
-    case 'ADD_HOBBY':
-      return [
-        ...state,
-        {
-          id: nextHobbyId++,
-          hobby: action.hobby
-        }
-      ];
-      case 'REMOVE_HOBBY':
-        return state.filter((hobby) => hobby.id !== action.id);
-      default:
-        return state
-  };
-};
-
-var addHobby = (hobby) => {
-  return {
-    type: 'ADD_HOBBY',
-    hobby
-  };
-};
-
-var removeHobby = (id) => {
-  return {
-    type: 'REMOVE_HOBBY',
-    id
-  };
-};
-
-// Movies Reducer and Action Generators
-// -----------------------
-var nextMovieId = 1;
-var moviesReducer = (state = [], action) => {
-  switch (action.type) {
-    case 'ADD_MOVIE':
-      return [
-        ...state,
-        {
-            id: nextMovieId++,
-            title: action.title,
-            genre: action.genre
-        }
-      ];
-    case 'REMOVE_MOVIE':
-      return state.filter((movie) => movie.id !== action.id);
-    default:
-      return state;
-  };
-};
-
-var addMovie = (title, genre) => {
-  return {
-    type: 'ADD_MOVIE',
-    title,
-    genre
-  };
-};
-
-var removeMovie = (id) => {
-  return {
-    type: "REMOVE_MOVIE",
-    id
-  };
-};
-
-// Map Reducer and Action Generators
-// -----------------------
-var mapReducer = (state = {isFetching: false, url: undefined}, action) => {
-  switch (action.type) {
-    case 'START_LOCATION_FETCH':
-      return {
-        isFetching: true,
-        url: undefined
-      };
-    case 'COMPLETE_LOCATION_FETCH':
-      return {
-        isFetching: false,
-        url: action.url
-      };
-    default:
-      return state;
-  };
-};
-
-var startLocationFetch = () => {
-  return {
-    type: 'START_LOCATION_FETCH'
-  };
-};
-
-var completeLocationFetch = (url) => {
-  return {
-    type: 'COMPLETE_LOCATION_FETCH',
-    url
-  };
-};
-
-var fetchLocation = () => {
-  store.dispatch(startLocationFetch());
-
-  axios.get('http://ipinfo.io').then(function (res) {
-    var loc = res.data.loc;
-    var baseUrl = "http://maps.google.com?q=";
-    store.dispatch(completeLocationFetch(baseUrl + loc));
-  })
-}
-
-
-// Combined Reducers
-// -----------------------
-var reducer = redux.combineReducers({
-  name: nameReducer,
-  hobbies: hobbiesReducer,
-  movies: moviesReducer,
-  map: mapReducer
-});
-
-var store = redux.createStore(reducer, redux.compose(
-  window.devToolsExtension ? window.devToolsExtension() : f => f
-));
 
 // subscribe to changes
 var unsubscribe = store.subscribe( () => {
@@ -160,20 +18,20 @@ var unsubscribe = store.subscribe( () => {
   }
 });
 
-fetchLocation();
+store.dispatch(actions.fetchLocation());
 
-store.dispatch(changeName('Boberta'));
-store.dispatch(changeName('Frankinda'));
-store.dispatch(changeName('Brunhilda'));
+store.dispatch(actions.changeName('Boberta'));
+store.dispatch(actions.changeName('Frankinda'));
+store.dispatch(actions.changeName('Brunhilda'));
 
-store.dispatch(addHobby('Sobbing quietly'));
-store.dispatch(addHobby('Sobbing Loudly'));
-store.dispatch(addHobby('Farting silently'));
+store.dispatch(actions.addHobby('Sobbing quietly'));
+store.dispatch(actions.addHobby('Sobbing Loudly'));
+store.dispatch(actions.addHobby('Farting silently'));
 
-store.dispatch(removeHobby(2));
+store.dispatch(actions.removeHobby(2));
 
-store.dispatch(addMovie('Goonies 2', 'Adventuretime'));
-store.dispatch(addMovie('Care Bears Funtime', 'Adventuretime'));
-store.dispatch(addMovie('Star Warriors', 'Fantasy Space'));
+store.dispatch(actions.addMovie('Goonies 2', 'Adventuretime'));
+store.dispatch(actions.addMovie('Care Bears Funtime', 'Adventuretime'));
+store.dispatch(actions.addMovie('Star Warriors', 'Fantasy Space'));
 
-store.dispatch(removeMovie(3));
+store.dispatch(actions.removeMovie(3));
