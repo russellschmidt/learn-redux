@@ -2,57 +2,8 @@ var redux = require('redux');
 
 console.log("Starting redux example");
 
-var stateDefault = {
-  name: 'Anonymous',
-  hobbies: [],
-  movies: []
-};
-
-var nextHobbyId = 1,
-    nextMovieId = 1;
-
-// var oldreducer = (state = stateDefault, action) => {
-//   switch(action.type) {
-//     case 'CHANGE_NAME':
-//       return {
-//         ...state,
-//         name: action.name
-//       };
-//     case 'ADD_HOBBY':
-//       return {
-//         ...state,
-//         hobbies: [...state.hobbies, {
-//           id: nextHobbyId++,
-//           hobby: action.hobby
-//         }]
-//       };
-//     case 'ADD_MOVIE':
-//       return {
-//         ...state,
-//         movies: [
-//           ...state.movies,
-//           {
-//             id: nextMovieId++,
-//             title: action.title,
-//             genre: action.genre
-//           }
-//         ]
-//       };
-//     case 'REMOVE_HOBBY':
-//       return {
-//         ...state,
-//         hobbies: state.hobbies.filter((hobby) => hobby.id !== action.id)
-//       };
-//     case 'REMOVE_MOVIE':
-//       return {
-//         ...state,
-//         movies: state.movies.filter((movie) => movie.id !== action.id)
-//       }
-//     default:
-//       return state;
-//   }
-// };
-
+// Name Reducer and Action Generators
+// -----------------------
 var nameReducer = (state = 'Anonymous', action) => {
   switch (action.type) {
     case 'CHANGE_NAME':
@@ -62,6 +13,16 @@ var nameReducer = (state = 'Anonymous', action) => {
   };
 };
 
+var changeName = (name) => {
+  return {
+    type: 'CHANGE_NAME',
+    name
+  };
+};
+
+// Hobbies Reducer and Action Generators
+// -----------------------
+var nextHobbyId = 1;
 var hobbiesReducer = (state = [], action) => {
   switch(action.type) {
     case 'ADD_HOBBY':
@@ -79,6 +40,23 @@ var hobbiesReducer = (state = [], action) => {
   };
 };
 
+var addHobby = (hobby) => {
+  return {
+    type: 'ADD_HOBBY',
+    hobby
+  };
+};
+
+var removeHobby = (id) => {
+  return {
+    type: 'REMOVE_HOBBY',
+    id
+  };
+};
+
+// Movies Reducer and Action Generators
+// -----------------------
+var nextMovieId = 1;
 var moviesReducer = (state = [], action) => {
   switch (action.type) {
     case 'ADD_MOVIE':
@@ -97,6 +75,23 @@ var moviesReducer = (state = [], action) => {
   };
 };
 
+var addMovie = (title, genre) => {
+  return {
+    type: 'ADD_MOVIE',
+    title,
+    genre
+  };
+};
+
+var removeMovie = (id) => {
+  return {
+    type: "REMOVE_MOVIE",
+    id
+  };
+};
+
+// Combined Reducers
+// -----------------------
 var reducer = redux.combineReducers({
   name: nameReducer,
   hobbies: hobbiesReducer,
@@ -114,55 +109,18 @@ var unsubscribe = store.subscribe( () => {
   document.getElementById('app').innerHTML = state.name;
 });
 
-store.dispatch({
-  type: "CHANGE_NAME",
-  name: "Bobert"
-});
+store.dispatch(changeName('Boberta'));
+store.dispatch(changeName('Frankinda'));
+store.dispatch(changeName('Brunhilda'));
 
-store.dispatch({
-  type: "ADD_HOBBY",
-  hobby: "Running"
-});
+store.dispatch(addHobby('Sobbing quietly'));
+store.dispatch(addHobby('Sobbing Loudly'));
+store.dispatch(addHobby('Farting silently'));
 
-store.dispatch({
-  type: "ADD_HOBBY",
-  hobby: "Walking"
-});
+store.dispatch(removeHobby(2));
 
-store.dispatch({
-  type: "ADD_HOBBY",
-  hobby: "Crying"
-});
+store.dispatch(addMovie('Goonies 2', 'Adventuretime'));
+store.dispatch(addMovie('Care Bears Funtime', 'Adventuretime'));
+store.dispatch(addMovie('Star Warriors', 'Fantasy Space'));
 
-store.dispatch({
-  type: "CHANGE_NAME",
-  name: "Fredjeffy"
-});
-
-store.dispatch({
-  type: 'ADD_MOVIE',
-  title: 'Goonies',
-  genre: 'Adventure'
-});
-
-store.dispatch({
-  type: 'ADD_MOVIE',
-  title: 'Robocop',
-  genre: 'Science Fiction'
-});
-
-store.dispatch({
-  type: 'ADD_MOVIE',
-  title: 'Event Horizon',
-  genre: 'Science Fiction Horror'
-});
-
-store.dispatch({
-  type: 'REMOVE_HOBBY',
-  id: 2
-});
-
-store.dispatch({
-  type: 'REMOVE_MOVIE',
-  id: 1
-});
+store.dispatch(removeMovie(3));
